@@ -694,27 +694,27 @@ export default function DisplayPage() {
   const playerGrid = [
     [
       '1',
-      'col-start-2 col-end-4 row-start-2 row-end-4 flex items-center justify-center z-10'
+      'col-start-7 col-end-9 row-start-2 row-end-4 flex items-center justify-center z-10'
     ],
     [
       '2',
-      'col-start-3 col-end-4 row-start-4 row-end-7 flex items-center justify-center z-10'
-    ],
-    [
-      '3',
-      'col-start-4 col-end-5 row-start-6 row-end-8 flex items-center justify-center z-10'
-    ],
-    [
-      '4',
-      'col-start-6 col-end-7 row-start-6 row-end-8 flex items-center justify-center z-10'
-    ],
-    [
-      '5',
       'col-start-7 col-end-8 row-start-4 row-end-7 flex items-center justify-center z-10'
     ],
     [
+      '3',
+      'col-start-6 col-end-7 row-start-6 row-end-8 flex items-center justify-center z-10'
+    ],
+    [
+      '4',
+      'col-start-4 col-end-5 row-start-6 row-end-8 flex items-center justify-center z-10'
+    ],
+    [
+      '5',
+      'col-start-3 col-end-4 row-start-4 row-end-7 flex items-center justify-center z-10'
+    ],
+    [
       '6',
-      'col-start-7 col-end-9 row-start-2 row-end-4 flex items-center justify-center z-10'
+      'col-start-2 col-end-4 row-start-2 row-end-4 flex items-center justify-center z-10'
     ]
   ]
 
@@ -846,21 +846,21 @@ export default function DisplayPage() {
             </div>
           </div>
 
-          {/* Left Side Player Cards (Players 1, 2, 3) - Cards positioned to the LEFT of players */}
+          {/* Right Side Player Cards (Players 1, 2, 3) - Cards positioned to the RIGHT of players */}
           {[1, 2, 3].map(playerNum => {
             const player = gameState.players[playerNum.toString()]
             if (!player) return null
 
-            // Responsive position cards to the LEFT of each player button
+            // Responsive position cards to the RIGHT of each player button
             const cardPositions = {
-              1: 'absolute top-[30%] sm:top-[32%] md:top-[35%] left-[6%] sm:left-[8%] md:left-[9%] transform -translate-y-1/2 z-30',
-              2: 'absolute top-[55%] sm:top-[56%] md:top-[58%] left-[10%] sm:left-[12%] md:left-[14%] transform -translate-y-1/2 z-30',
-              3: 'absolute top-[68%] sm:top-[69%] md:top-[71%] left-[20%] sm:left-[22%] md:left-[24%] transform -translate-y-1/2 z-30'
+              1: 'absolute top-[30%] sm:top-[32%] md:top-[35%] right-[6%] sm:right-[7%] md:right-[8%] transform -translate-y-1/2 z-30',
+              2: 'absolute top-[55%] sm:top-[56%] md:top-[58%] right-[10%] sm:right-[11%] md:right-[13%] transform -translate-y-1/2 z-30',
+              3: 'absolute top-[68%] sm:top-[69%] md:top-[71%] right-[20%] sm:right-[22%] md:right-[24%] transform -translate-y-1/2 z-30'
             }
 
             return (
               <div
-                key={`left-${playerNum}`}
+                key={`right-${playerNum}`}
                 className={
                   cardPositions[playerNum as keyof typeof cardPositions]
                 }
@@ -887,21 +887,21 @@ export default function DisplayPage() {
             )
           })}
 
-          {/* Right Side Player Cards (Players 4, 5, 6) - Cards positioned to the RIGHT of players */}
+          {/* Left Side Player Cards (Players 4, 5, 6) - Cards positioned to the LEFT of players */}
           {[4, 5, 6].map(playerNum => {
             const player = gameState.players[playerNum.toString()]
             if (!player) return null
 
-            // Responsive position cards to the RIGHT of each player button
+            // Responsive position cards to the LEFT of each player button
             const cardPositions = {
-              4: 'absolute top-[68%] sm:top-[69%] md:top-[71%] right-[20%] sm:right-[22%] md:right-[24%] transform -translate-y-1/2 z-30',
-              5: 'absolute top-[55%] sm:top-[56%] md:top-[58%] right-[10%] sm:right-[11%] md:right-[13%] transform -translate-y-1/2 z-30',
-              6: 'absolute top-[30%] sm:top-[32%] md:top-[35%] right-[6%] sm:right-[7%] md:right-[8%] transform -translate-y-1/2 z-30'
+              4: 'absolute top-[68%] sm:top-[69%] md:top-[71%] left-[20%] sm:left-[22%] md:left-[24%] transform -translate-y-1/2 z-30',
+              5: 'absolute top-[55%] sm:top-[56%] md:top-[58%] left-[10%] sm:left-[12%] md:left-[14%] transform -translate-y-1/2 z-30',
+              6: 'absolute top-[30%] sm:top-[32%] md:top-[35%] left-[6%] sm:left-[8%] md:left-[9%] transform -translate-y-1/2 z-30'
             }
 
             return (
               <div
-                key={`right-${playerNum}`}
+                key={`left-${playerNum}`}
                 className={
                   cardPositions[playerNum as keyof typeof cardPositions]
                 }

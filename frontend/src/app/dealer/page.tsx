@@ -768,117 +768,126 @@ export default function DealerPage() {
       {/* Game Controls Modal */}
       <AnimatePresence>
         {menuOpen && (
-          <div className='fixed top-0 left-0 h-full w-full z-50 flex items-center justify-center bg-black bg-opacity-60 overflow-y-auto p-4'>
+          <div className='fixed top-0 left-0 h-full w-full z-50 flex items-center justify-center bg-black bg-opacity-60 p-4'>
             <div
-              className='rounded-lg shadow-lg p-8 relative min-w-[320px] min-h-[200px] max-w-[90vw] my-8 flex flex-col items-center justify-center'
+              className='rounded-lg shadow-lg relative w-full max-w-4xl max-h-[90vh] flex flex-col'
               style={{ backgroundColor: '#F0DEAD' }}
             >
-              <button
-                onClick={() => setMenuOpen(false)}
-                className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none'
-                aria-label='Close'
-              >
-                ×
-              </button>
-              <div className='flex flex-row items-center justify-center gap-6 w-full h-full'>
+              {/* Header / Close Button Area */}
+              <div className='flex justify-end p-2'>
                 <button
-                  className='px-3 py-1.5 rounded-lg text-xl font-semibold shadow text-white transition-colors'
-                  style={{
-                    width: 166,
-                    height: 49,
-                    backgroundColor:
-                      gameState.game_mode === 'live' ? '#741003' : '#911606'
-                  }}
-                  onClick={() => {
-                    const newMode = 'live'
-                    sendMessage({ action: 'set_game_mode', mode: newMode })
-                    setTimeout(() => {
-                      sendMessage({ action: 'reset_game' })
-                    }, 200)
-                  }}
+                  onClick={() => setMenuOpen(false)}
+                  className='text-gray-600 hover:text-gray-800 text-3xl font-bold focus:outline-none z-10 px-2'
+                  aria-label='Close'
                 >
-                  Manual Mode
-                </button>
-
-                <button
-                  className='px-3 py-1.5 rounded-lg text-xl font-semibold shadow text-white transition-colors whitespace-nowrap'
-                  style={{
-                    height: 49,
-                    backgroundColor:
-                      gameState.game_mode === 'automatic'
-                        ? '#741003'
-                        : '#911606'
-                  }}
-                  onClick={() => {
-                    const newMode = 'automatic'
-                    sendMessage({ action: 'set_game_mode', mode: newMode })
-                    setTimeout(() => {
-                      sendMessage({ action: 'reset_game' })
-                    }, 200)
-                  }}
-                >
-                  Automatic Mode
-                </button>
-                <button
-                  className='px-3 py-1.5 rounded-lg text-xl font-semibold shadow text-white transition-colors'
-                  style={{
-                    width: 166,
-                    height: 49,
-                    backgroundColor:
-                      gameState.game_mode === 'manual' ? '#741003' : '#911606'
-                  }}
-                  onClick={() => {
-                    const newMode = 'manual'
-                    sendMessage({ action: 'set_game_mode', mode: newMode })
-                    setTimeout(() => {
-                      sendMessage({ action: 'reset_game' })
-                    }, 200)
-                  }}
-                >
-                  Live Mode
+                  ×
                 </button>
               </div>
 
-              {/* Premium Burn Card Toggle */}
-              <div className="flex flex-col items-center justify-center gap-3 mt-6 w-full">
-                <span className="text-[#741003] font-bold text-lg tracking-wider uppercase">Burn Card Mode</span>
-                <div
-                  className={`w-20 h-10 rounded-full p-1 cursor-pointer transition-colors duration-500 ease-in-out shadow-inner relative flex items-center ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-400'}`}
-                  onClick={() => sendMessage({ action: 'toggle_burn_card' })}
-                >
-                  {/* Glowing Effect when ON */}
-                  {gameState.burn_card_mode && (
-                    <motion.div
-                      layoutId="glow"
-                      className="absolute inset-0 rounded-full bg-[#ff4d4d] opacity-50 blur-md"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.6 }}
-                      exit={{ opacity: 0 }}
-                    />
-                  )}
+              {/* Scrollable Content */}
+              <div className='overflow-y-auto p-4 md:p-8 flex flex-col items-center w-full'>
 
-                  {/* Slider Knob */}
-                  <motion.div
-                    className="w-8 h-8 bg-white rounded-full shadow-md z-10"
-                    animate={{
-                      x: gameState.burn_card_mode ? 40 : 0
+                {/* Game Mode Buttons - Stack on mobile, row on desktop */}
+                <div className='flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 w-full'>
+                  <button
+                    className='px-3 py-2 rounded-lg text-lg md:text-xl font-semibold shadow text-white transition-colors w-full md:w-auto min-w-[160px]'
+                    style={{
+                      height: 49,
+                      backgroundColor:
+                        gameState.game_mode === 'live' ? '#741003' : '#911606'
                     }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 30
+                    onClick={() => {
+                      const newMode = 'live'
+                      sendMessage({ action: 'set_game_mode', mode: newMode })
+                      setTimeout(() => {
+                        sendMessage({ action: 'reset_game' })
+                      }, 200)
                     }}
                   >
-                    {/* Inner detail for premium look */}
-                    <div className="w-full h-full rounded-full border-2 border-gray-100 flex items-center justify-center">
-                      <div className={`w-2 h-2 rounded-full ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-300'}`} />
-                    </div>
-                  </motion.div>
+                    Manual Mode
+                  </button>
+
+                  <button
+                    className='px-3 py-2 rounded-lg text-lg md:text-xl font-semibold shadow text-white transition-colors w-full md:w-auto min-w-[160px] whitespace-nowrap'
+                    style={{
+                      height: 49,
+                      backgroundColor:
+                        gameState.game_mode === 'automatic'
+                          ? '#741003'
+                          : '#911606'
+                    }}
+                    onClick={() => {
+                      const newMode = 'automatic'
+                      sendMessage({ action: 'set_game_mode', mode: newMode })
+                      setTimeout(() => {
+                        sendMessage({ action: 'reset_game' })
+                      }, 200)
+                    }}
+                  >
+                    Automatic Mode
+                  </button>
+
+                  <button
+                    className='px-3 py-2 rounded-lg text-lg md:text-xl font-semibold shadow text-white transition-colors w-full md:w-auto min-w-[160px]'
+                    style={{
+                      height: 49,
+                      backgroundColor:
+                        gameState.game_mode === 'manual' ? '#741003' : '#911606'
+                    }}
+                    onClick={() => {
+                      const newMode = 'manual'
+                      sendMessage({ action: 'set_game_mode', mode: newMode })
+                      setTimeout(() => {
+                        sendMessage({ action: 'reset_game' })
+                      }, 200)
+                    }}
+                  >
+                    Live Mode
+                  </button>
                 </div>
-                <span className="text-sm font-semibold text-[#741003] opacity-80">
-                  {gameState.burn_card_mode ? 'ACTIVE - INPUT IGNORED' : 'INACTIVE - NORMAL PLAY'}
-                </span>
+
+                {/* Premium Burn Card Toggle */}
+                <div className="flex flex-col items-center justify-center gap-3 mt-8 w-full">
+                  <span className="text-[#741003] font-bold text-lg tracking-wider uppercase">Burn Card Mode</span>
+                  <div
+                    className={`w-20 h-10 rounded-full p-1 cursor-pointer transition-colors duration-500 ease-in-out shadow-inner relative flex items-center ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-400'}`}
+                    onClick={() => sendMessage({ action: 'toggle_burn_card' })}
+                  >
+                    {/* Glowing Effect when ON */}
+                    {gameState.burn_card_mode && (
+                      <motion.div
+                        layoutId="glow"
+                        className="absolute inset-0 rounded-full bg-[#ff4d4d] opacity-50 blur-md"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.6 }}
+                        exit={{ opacity: 0 }}
+                      />
+                    )}
+
+                    {/* Slider Knob */}
+                    <motion.div
+                      className="w-8 h-8 bg-white rounded-full shadow-md z-10"
+                      animate={{
+                        x: gameState.burn_card_mode ? 40 : 0
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30
+                      }}
+                    >
+                      {/* Inner detail for premium look */}
+                      <div className="w-full h-full rounded-full border-2 border-gray-100 flex items-center justify-center">
+                        <div className={`w-2 h-2 rounded-full ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-300'}`} />
+                      </div>
+                    </motion.div>
+                  </div>
+                  <span className="text-sm font-semibold text-[#741003] opacity-80">
+                    {gameState.burn_card_mode ? 'ACTIVE - INPUT IGNORED' : 'INACTIVE - NORMAL PLAY'}
+                  </span>
+                </div>
               </div>
+              {/* Additional controls for live mode */}
               {gameState.game_mode === 'live' ? (
                 <div className='flex flex-row w-full gap-6 justify-center items-center mt-8'>
                   {/* Second column */}

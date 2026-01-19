@@ -708,9 +708,14 @@ async def handle_assign_war_card(target, card, player_id=None):
         await broadcast_to_dealers({"action": "error", "message": "No active war round."})
         return
     if card not in game_state["deck"]:
-        await broadcast_to_dealers({"action": "error", "message": f"Card {card} not available in deck."})
-        return
-    game_state["deck"].remove(card)
+        # In Live/Manual mode, trust the physical shoe
+        if game_state["game_mode"] in ["live", "manual"]:
+            print(f"[DECK WARNING] War Card {card} not in digital deck (forcing acceptance).")
+        else:
+            await broadcast_to_dealers({"action": "error", "message": f"Card {card} not available in deck."})
+            return
+    else:
+        game_state["deck"].remove(card)
     if target == "dealer":
         war["dealer_card"] = card
         # Track war card assignment order for undo
@@ -1132,8 +1137,13 @@ def get_next_war_card_assignment_target():
 #         })
 
 def assign_card_if_available(card, error_context="assignment"):
-    """Remove card from deck if available, else return False and send error."""
+    """Remove card from deck if available, else return False and send error (unless in live/manual mode)."""
     if card not in game_state["deck"]:
+        # In Live/Manual mode, we trust the physical shoe/dealer over the digital count to prevent blocking
+        if game_state["game_mode"] in ["live", "manual"]:
+            print(f"[DECK WARNING] Card {card} not in digital deck, but forcing acceptance in {game_state['game_mode']} mode.")
+            return True
+            
         asyncio.create_task(broadcast_to_dealers({
             "action": "error",
             "message": f"Card {card} cannot be used for {error_context}: all 6 copies have already been assigned or burned."
