@@ -52,6 +52,7 @@ game_state = {
     "auto_choice_delay": 3,  # Seconds to wait for player choices before auto-surrender
     "shoe_first_card_burned": False,  # Flag to track if first card from shoe reader is burned
     "message_sequence": 0,  # Add sequence counter for message ordering
+    "burn_card_mode": False, # Mode to ignore shoe reader inputs
 }
 
 # In-memory session stats (not MongoDB)
@@ -170,7 +171,9 @@ async def handle_connection(websocket, path=None):
         "table_number": game_state["table_number"],
         "min_bet": game_state["min_bet"],
         "max_bet": game_state["max_bet"],
-        "player_results": game_state["player_results"]
+        "max_bet": game_state["max_bet"],
+        "player_results": game_state["player_results"],
+        "burn_card_mode": game_state.get("burn_card_mode", False)
     }
     # PATCH: Always include war round state if present
     if game_state.get("war_round_active") or (game_state.get("war_round") and game_state["war_round"]):
@@ -236,6 +239,9 @@ async def handle_connection(websocket, path=None):
                 
             elif data["action"] == "set_game_mode":
                 await handle_set_game_mode(data["mode"])
+
+            elif data["action"] == "toggle_burn_card":
+                await handle_toggle_burn_card()
                 
             # elif data["action"] == "live_card_scanned":
             #     await handle_live_card_scan(data["card"])
@@ -1244,7 +1250,8 @@ async def broadcast_game_state_update():
         "table_number": game_state["table_number"],
         "min_bet": game_state["min_bet"],
         "max_bet": game_state["max_bet"],
-        "player_results": game_state["player_results"]
+        "player_results": game_state["player_results"],
+        "burn_card_mode": game_state.get("burn_card_mode", False)
     }
     if game_state.get("war_round_active") or (game_state.get("war_round") and game_state["war_round"]):
         game_state_update["war_round_active"] = game_state.get("war_round_active", False)
@@ -1314,9 +1321,20 @@ def extract_card_value(input_string):
     match = re.search(r"<Card:(.*?)>", input_string)
     return match.group(1) if match else None
 
+async def handle_toggle_burn_card():
+    """Toggles the burn card mode."""
+    game_state["burn_card_mode"] = not game_state.get("burn_card_mode", False)
+    print(f"[BURN CARD MODE] Toggled to: {game_state['burn_card_mode']}")
+    await broadcast_game_state_update()
+
 # Unified handler for shoe reader cards (assigns to main or war round as needed)
 async def handle_card_from_shoe(card):
     try:
+        # CHECK BURN CARD MODE FIRST
+        if game_state.get("burn_card_mode", False):
+            print(f"[BURN CARD MODE] Ignoring card {card} from shoe")
+            return
+
         if game_state.get("war_round_active"):
             print(f"[SHOE] Routing card {card} to WAR round assignment (war_round_active={game_state['war_round_active']})")
             # War round: assign to next war target

@@ -33,6 +33,7 @@ interface GameState {
       players: Record<string, string | null>
     }
   }
+  burn_card_mode?: boolean
 }
 
 interface PlayerData {
@@ -798,6 +799,7 @@ export default function DealerPage() {
                 >
                   Manual Mode
                 </button>
+
                 <button
                   className='px-3 py-1.5 rounded-lg text-xl font-semibold shadow text-white transition-colors whitespace-nowrap'
                   style={{
@@ -835,6 +837,47 @@ export default function DealerPage() {
                 >
                   Live Mode
                 </button>
+              </div>
+
+              {/* Premium Burn Card Toggle */}
+              <div className="flex flex-col items-center justify-center gap-3 mt-6 w-full">
+                <span className="text-[#741003] font-bold text-lg tracking-wider uppercase">Burn Card Mode</span>
+                <div
+                  className={`w-20 h-10 rounded-full p-1 cursor-pointer transition-colors duration-500 ease-in-out shadow-inner relative flex items-center ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-400'}`}
+                  onClick={() => sendMessage({ action: 'toggle_burn_card' })}
+                >
+                  {/* Glowing Effect when ON */}
+                  {gameState.burn_card_mode && (
+                    <motion.div
+                      layoutId="glow"
+                      className="absolute inset-0 rounded-full bg-[#ff4d4d] opacity-50 blur-md"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.6 }}
+                      exit={{ opacity: 0 }}
+                    />
+                  )}
+
+                  {/* Slider Knob */}
+                  <motion.div
+                    className="w-8 h-8 bg-white rounded-full shadow-md z-10"
+                    animate={{
+                      x: gameState.burn_card_mode ? 40 : 0
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30
+                    }}
+                  >
+                    {/* Inner detail for premium look */}
+                    <div className="w-full h-full rounded-full border-2 border-gray-100 flex items-center justify-center">
+                      <div className={`w-2 h-2 rounded-full ${gameState.burn_card_mode ? 'bg-[#741003]' : 'bg-gray-300'}`} />
+                    </div>
+                  </motion.div>
+                </div>
+                <span className="text-sm font-semibold text-[#741003] opacity-80">
+                  {gameState.burn_card_mode ? 'ACTIVE - INPUT IGNORED' : 'INACTIVE - NORMAL PLAY'}
+                </span>
               </div>
               {gameState.game_mode === 'live' ? (
                 <div className='flex flex-row w-full gap-6 justify-center items-center mt-8'>
@@ -940,8 +983,8 @@ export default function DealerPage() {
                       <div />
                       <button
                         className={`rounded-lg shadow text-xl font-bold flex items-center justify-center ${manualCard[0] === 'A'
-                            ? 'bg-[#741003] text-white'
-                            : 'bg-white text-[#741003]'
+                          ? 'bg-[#741003] text-white'
+                          : 'bg-white text-[#741003]'
                           }`}
                         style={{ width: 80, height: 44 }}
                         onClick={() =>
@@ -968,8 +1011,8 @@ export default function DealerPage() {
                         <button
                           key={`grid-btn-${rank}`}
                           className={`rounded-lg shadow text-xl font-bold flex items-center justify-center ${manualCard[0] === rank
-                              ? 'bg-[#741003] text-white'
-                              : 'bg-white text-[#741003]'
+                            ? 'bg-[#741003] text-white'
+                            : 'bg-white text-[#741003]'
                             }`}
                           style={{ width: 80, height: 44 }}
                           onClick={() =>
@@ -991,8 +1034,8 @@ export default function DealerPage() {
                         <button
                           key={`suit-btn-${suit.value}`}
                           className={`rounded-lg shadow text-xl font-bold flex items-center justify-center ${manualCard[1] === suit.value
-                              ? 'bg-[#741003] text-white'
-                              : 'bg-white text-[#741003]'
+                            ? 'bg-[#741003] text-white'
+                            : 'bg-white text-[#741003]'
                             } ${suit.value === 'H' || suit.value === 'D'
                               ? 'text-red-600'
                               : 'text-black'
@@ -1010,8 +1053,8 @@ export default function DealerPage() {
                     <div className='flex flex-row gap-4 items-center justify-center'>
                       <button
                         className={`rounded-lg shadow text-xl font-bold flex items-center justify-center ${manualCard.length === 2
-                            ? 'bg-[#D6AB5D] text-white'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          ? 'bg-[#D6AB5D] text-white'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                           }`}
                         style={{ width: 110, height: 44 }}
                         onClick={() => {
@@ -1191,111 +1234,114 @@ export default function DealerPage() {
                 </div>
               )}
             </div>
-          </div>
-        )}
-      </AnimatePresence>
+          </div >
+        )
+        }
+      </AnimatePresence >
 
       {/* Bet/Table Menu Modal */}
       <AnimatePresence>
-        {betMenuOpen && (
-          <div className='fixed top-0 left-0 h-full w-full z-50 flex items-center justify-center bg-black bg-opacity-60 overflow-y-auto p-4'>
-            <div
-              className='rounded-lg shadow-lg p-8 relative min-w-[320px] min-h-[200px] max-w-[90vw] my-8 flex flex-col items-center justify-center'
-              style={{ backgroundColor: '#F0DEAD' }}
-            >
-              <button
-                onClick={() => setBetMenuOpen(false)}
-                className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none'
-                aria-label='Close'
+        {
+          betMenuOpen && (
+            <div className='fixed top-0 left-0 h-full w-full z-50 flex items-center justify-center bg-black bg-opacity-60 overflow-y-auto p-4'>
+              <div
+                className='rounded-lg shadow-lg p-8 relative min-w-[320px] min-h-[200px] max-w-[90vw] my-8 flex flex-col items-center justify-center'
+                style={{ backgroundColor: '#F0DEAD' }}
               >
-                ×
-              </button>
-              <h2 className='text-xl font-bold text-[#741003] mb-6 text-center'>
-                Table & Betting
-              </h2>
-              <div className='mb-4 w-full max-w-xs'>
-                <label className='block text-[#741003] font-semibold mb-2'>
-                  Table Number
-                </label>
-                <input
-                  type='text'
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                  value={pendingTableNumber}
-                  onChange={e =>
-                    setPendingTableNumber(
-                      e.target.value === ''
-                        ? 0
-                        : Number(e.target.value.replace(/\D/g, ''))
-                    )
-                  }
-                  className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
-                  style={{ MozAppearance: 'textfield' }}
-                />
+                <button
+                  onClick={() => setBetMenuOpen(false)}
+                  className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none'
+                  aria-label='Close'
+                >
+                  ×
+                </button>
+                <h2 className='text-xl font-bold text-[#741003] mb-6 text-center'>
+                  Table & Betting
+                </h2>
+                <div className='mb-4 w-full max-w-xs'>
+                  <label className='block text-[#741003] font-semibold mb-2'>
+                    Table Number
+                  </label>
+                  <input
+                    type='text'
+                    inputMode='numeric'
+                    pattern='[0-9]*'
+                    value={pendingTableNumber}
+                    onChange={e =>
+                      setPendingTableNumber(
+                        e.target.value === ''
+                          ? 0
+                          : Number(e.target.value.replace(/\D/g, ''))
+                      )
+                    }
+                    className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
+                    style={{ MozAppearance: 'textfield' }}
+                  />
+                </div>
+                <div className='mb-4 w-full max-w-xs'>
+                  <label className='block text-[#741003] font-semibold mb-2'>
+                    Min Bet
+                  </label>
+                  <input
+                    type='text'
+                    inputMode='numeric'
+                    pattern='[0-9]*'
+                    value={pendingMinBet}
+                    onChange={e =>
+                      setPendingMinBet(
+                        e.target.value === ''
+                          ? 0
+                          : Number(e.target.value.replace(/\D/g, ''))
+                      )
+                    }
+                    className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
+                    style={{ MozAppearance: 'textfield' }}
+                  />
+                </div>
+                <div className='mb-6 w-full max-w-xs'>
+                  <label className='block text-[#741003] font-semibold mb-2'>
+                    Max Bet
+                  </label>
+                  <input
+                    type='text'
+                    inputMode='numeric'
+                    pattern='[0-9]*'
+                    value={pendingMaxBet}
+                    onChange={e =>
+                      setPendingMaxBet(
+                        e.target.value === ''
+                          ? 0
+                          : Number(e.target.value.replace(/\D/g, ''))
+                      )
+                    }
+                    className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
+                    style={{ MozAppearance: 'textfield' }}
+                  />
+                </div>
+                <button
+                  className='rounded-lg shadow text-xl font-bold text-white w-full max-w-xs'
+                  style={{ height: 49, backgroundColor: '#911606' }}
+                  onClick={() => {
+                    sendMessage({
+                      action: 'change_bets',
+                      min_bet: pendingMinBet,
+                      max_bet: pendingMaxBet
+                    })
+                    sendMessage({
+                      action: 'change_table',
+                      table_number: pendingTableNumber
+                    })
+                    setBetMenuOpen(false)
+                    addNotification('Table and betting updated')
+                  }}
+                >
+                  Save
+                </button>
               </div>
-              <div className='mb-4 w-full max-w-xs'>
-                <label className='block text-[#741003] font-semibold mb-2'>
-                  Min Bet
-                </label>
-                <input
-                  type='text'
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                  value={pendingMinBet}
-                  onChange={e =>
-                    setPendingMinBet(
-                      e.target.value === ''
-                        ? 0
-                        : Number(e.target.value.replace(/\D/g, ''))
-                    )
-                  }
-                  className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
-                  style={{ MozAppearance: 'textfield' }}
-                />
-              </div>
-              <div className='mb-6 w-full max-w-xs'>
-                <label className='block text-[#741003] font-semibold mb-2'>
-                  Max Bet
-                </label>
-                <input
-                  type='text'
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                  value={pendingMaxBet}
-                  onChange={e =>
-                    setPendingMaxBet(
-                      e.target.value === ''
-                        ? 0
-                        : Number(e.target.value.replace(/\D/g, ''))
-                    )
-                  }
-                  className='w-full bg-white border-2 border-[#741003] rounded-lg px-3 py-2 text-[#741003] appearance-none font-semibold'
-                  style={{ MozAppearance: 'textfield' }}
-                />
-              </div>
-              <button
-                className='rounded-lg shadow text-xl font-bold text-white w-full max-w-xs'
-                style={{ height: 49, backgroundColor: '#911606' }}
-                onClick={() => {
-                  sendMessage({
-                    action: 'change_bets',
-                    min_bet: pendingMinBet,
-                    max_bet: pendingMaxBet
-                  })
-                  sendMessage({
-                    action: 'change_table',
-                    table_number: pendingTableNumber
-                  })
-                  setBetMenuOpen(false)
-                  addNotification('Table and betting updated')
-                }}
-              >
-                Save
-              </button>
             </div>
-          </div>
-        )}
-      </AnimatePresence>
+          )
+        }
+      </AnimatePresence >
 
       <AnimatePresence>
         {notifications.map((notification, index) => (
@@ -1645,14 +1691,14 @@ export default function DealerPage() {
                             {isActive && (
                               <div
                                 className={`px-3 py-1 rounded-full text-sm font-semibold ${playerData.status === 'active'
-                                    ? 'bg-green-500/20 text-green-400'
-                                    : playerData.status === 'war'
-                                      ? 'bg-red-500/20 text-red-400'
-                                      : playerData.status === 'waiting_choice'
-                                        ? 'bg-yellow-500/20 text-yellow-400'
-                                        : playerData.status === 'surrender'
-                                          ? 'bg-gray-500/20 text-gray-400'
-                                          : 'bg-gray-500/20 text-gray-400'
+                                  ? 'bg-green-500/20 text-green-400'
+                                  : playerData.status === 'war'
+                                    ? 'bg-red-500/20 text-red-400'
+                                    : playerData.status === 'waiting_choice'
+                                      ? 'bg-yellow-500/20 text-yellow-400'
+                                      : playerData.status === 'surrender'
+                                        ? 'bg-gray-500/20 text-gray-400'
+                                        : 'bg-gray-500/20 text-gray-400'
                                   }`}
                               >
                                 {playerData.status === 'surrender'
@@ -1882,6 +1928,6 @@ export default function DealerPage() {
           ANY GRIEVANCES THE MANAGEMENT DECISION WILL BE FINAL
         </div>
       </div>
-    </div>
+    </div >
   )
 }
